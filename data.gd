@@ -389,7 +389,7 @@ func parse_json(path: String) -> Dictionary[String, Variant]:
 func write_json(path: String, value: Dictionary) -> void:
 	var indent: Variant = settings("json_indent")
 	if not indent is String:
-		Console.cmd_err("Failed to get setting 'json_indent' as String")
+		push_error("Failed to get setting 'json_indent' as String")
 		return
 
 	var file := FileAccess.open(path, FileAccess.WRITE)
