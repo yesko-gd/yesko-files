@@ -39,8 +39,6 @@ var _info: Dictionary[String, Variant] = {}
 var _maps: Dictionary[String, Dictionary] = {}
 var _constants: Dictionary[String, Variant]
 var _settings: Dictionary[String, Dictionary] = {}
-## shortcuts represent methods of current_child
-var _shortcuts: Dictionary[String, Dictionary]
 
 var _actions: Array[String] = []
 
@@ -68,9 +66,9 @@ func _shortcut_input(event: InputEvent) -> void:
 
 	key_pressed.emit(str(key_name).trim_prefix("KEY_"))
 
-	for shortcut: String in _shortcuts.keys():
+	for shortcut: String in _settings.shortcuts.keys():
 		var dict: Dictionary[String, String] = {}
-		dict.assign(_shortcuts[shortcut])
+		dict.assign(_settings.shortcuts[shortcut])
 
 		var modifier: String = dict.modifier
 
@@ -353,6 +351,8 @@ func reload_shortcuts() -> void:
 			return
 
 		var key: String = shortcut_dict.key
+		if key == "":
+			continue
 		if not _maps.key.has(key):
 			push_error("Key '%s' not found in '%s::key'" % [key, MAPS_PATH])
 			return
@@ -361,8 +361,6 @@ func reload_shortcuts() -> void:
 		if alt_key != "" and not _maps.key.has(alt_key):
 			push_error("Alternative key '%s' not found in '%s::key'" % [key, MAPS_PATH])
 			return
-
-	_shortcuts.assign(_settings.shortcuts)
 
 
 func reload_inputs() -> void:
