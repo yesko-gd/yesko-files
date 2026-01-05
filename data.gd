@@ -121,6 +121,17 @@ func settings(key: String) -> Variant:
 	return _settings.settings[key]
 
 
+func shortcut_dict(key: String) -> Dictionary[String, String]:
+	if not _settings.shortcuts.has(key):
+		push_error("Invalid key '%s' in shortcuts" % key)
+		return {}
+
+	var ret: Dictionary[String, String] = {}
+	ret.assign(_settings.shortcuts[key])
+
+	return ret
+
+
 func maps(section: String, key: String, default: Variant = null, error: bool = true) -> Variant:
 	if not _maps.has(section):
 		if error:
@@ -218,6 +229,25 @@ func set_keybinding(key: String, value: String, write_file: bool = true) -> bool
 		write_settings_to_file()
 
 	reload_inputs()
+
+	return true
+
+
+func set_shortcut_element(key: String, element: String, value: String, write_file: bool = true) -> bool:
+	if not _settings.shortcuts.has(key):
+		push_error("Key '%s' not found in '%s::keybinds'" % [key, SETTINGS_PATH])
+		return false
+
+	if not _settings.shortcuts[key].has(element):
+		push_error("Unrecognised shortcut element '%s' (in key '%s')" % [element, key])
+		return false
+
+	_settings.shortcuts[key][element] = value
+
+	if write_file:
+		write_settings_to_file()
+
+	reload_shortcuts()
 
 	return true
 
