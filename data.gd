@@ -69,19 +69,23 @@ func _shortcut_input(event: InputEvent) -> void:
 	key_pressed.emit(str(key_name).trim_prefix("KEY_"))
 
 	for shortcut: String in _shortcuts.keys():
-		var shortcut_dict: Dictionary[String, String] = {}
-		shortcut_dict.assign(_shortcuts[shortcut])
+		var dict: Dictionary[String, String] = {}
+		dict.assign(_shortcuts[shortcut])
 
-		var modifier_key: Variant = maps("key", shortcut_dict.modifier, KEY_NONE, false)
-		if not modifier_key is int:
-			modifier_key = KEY_NONE
-		if shortcut_dict.modifier != "" and not Input.is_key_pressed(modifier_key as int):
-			continue
+		var modifier: String = dict.modifier
+
+		var modifier_key: int = maps("key", modifier, KEY_NONE, modifier != "")
+		if modifier != "":
+			if modifier_key == KEY_NONE:
+				push_error("Couldn't find keycode of '%s'" % modifier)
+				return
+			if not Input.is_key_pressed(modifier_key as int):
+				continue
 
 		var pressed: bool = false
-		if key_name == shortcut_dict.key:
+		if key_name == dict.key:
 			pressed = true
-		elif key_name == shortcut_dict.alt_key:
+		elif key_name == dict.alt_key:
 			pressed = true
 		if not pressed:
 			continue
