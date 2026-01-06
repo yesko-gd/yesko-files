@@ -383,19 +383,22 @@ func load_inputs() -> void:
 		_actions.push_back(action_name)
 
 
-func add_input(action_name: String, event_name: String) -> void:
+## The return value indicates whether the new action was added. It may or may not have an input event
+func add_input(action_name: String, event_name: String) -> bool:
 	if InputMap.has_action(action_name):
 		push_error("Action '%s' already exists" % action_name)
-		return
+		return false
 
 	var event := input_event(event_name)
 
-	if event == null:
-		push_error("Error retreiving code for event name '%s'" % event_name)
-		return
-
 	InputMap.add_action(action_name)
+
+	if event == null:
+		return true
+
 	InputMap.action_add_event(action_name, event)
+
+	return true
 
 # - utility
 
@@ -447,7 +450,6 @@ func input_event(event_name: String) -> InputEvent:
 		event.button_index = _maps.mouse_button[event_name]
 		return event
 
-	push_error("Unknown event name '%s'" % event_name)
 	return null
 
 
