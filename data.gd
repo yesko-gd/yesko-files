@@ -72,9 +72,9 @@ func _shortcut_input(event: InputEvent) -> void:
 
 		var modifier: String = dict.modifier
 
-		var modifier_key: int = maps("key", modifier, KEY_NONE, modifier != "")
-		if modifier != "":
-			if modifier_key == KEY_NONE:
+		var modifier_key: int = maps("key", modifier, -1, modifier != "")
+		if modifier != "" and modifier_key != KEY_NONE:
+			if modifier_key == -1:
 				push_error("Couldn't find keycode of '%s'" % modifier)
 				return
 			if not Input.is_key_pressed(modifier_key as int):
